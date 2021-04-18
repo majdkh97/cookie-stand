@@ -1,5 +1,7 @@
 'use strict';
 let time = ['6AM','7AM','8AM','9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM'];
+let letters = /^[A-Za-z]+$/;
+let numbers = /^[0-9]+$/;
 let arrayOfObjects = [];
 function City(name,minCust,maxCust,avgCookie){
   this.name = name;
@@ -34,21 +36,27 @@ City.prototype.render = function(){
   thEl.textContent = this.sumCookies;
 };
 
-let container = document.getElementById('sales');
-let tableE1 = document.createElement('table');
-container.appendChild(tableE1);
-let headingRow = document.createElement('tr');
-tableE1.appendChild(headingRow);
-let th=document.createElement('th');
-headingRow.appendChild(th);
-th.textContent=' ';
-for(let i = 0 ; i <= 14 ; i++){
-  th=document.createElement('th');
+function header(){
+  let container = document.getElementById('sales');
+  let tableE1 = document.createElement('table');
+  container.appendChild(tableE1);
+  let headingRow = document.createElement('tr');
+  tableE1.appendChild(headingRow);
+  let th=document.createElement('th');
   headingRow.appendChild(th);
-  th.textContent=time[i];
+  th.textContent=' ';
+  for(let i = 0 ; i <= 14 ; i++){
+    th=document.createElement('th');
+    headingRow.appendChild(th);
+    th.textContent=time[i];
+  }
+  headingRow.appendChild(th);
+  th.textContent='Total/Day';
+
+  return tableE1;
 }
-headingRow.appendChild(th);
-th.textContent='Total/Day';
+
+let tableE1=header();
 
 let seattle = new City ('Seattle',23,65,6.3);
 seattle.cpHourSold();
@@ -75,49 +83,7 @@ lima.cpHourSold();
 lima.render();
 console.log(lima);
 
-let footerRow=document.createElement('tr');
-tableE1.appendChild(footerRow);
-footerRow.textContent='Totals';
-for(let i = 0 ; i < 14 ; i++ ){
-  let tf=document.createElement('td');
-  footerRow.appendChild(tf);
-  let sum = 0;
-  for(let x = 0 ; x<arrayOfObjects.length ; x++)
-    sum=sum + arrayOfObjects[x].cpHour[i];
-  tf.textContent = sum;
-}
-
-let grandTotal = 0;
-for(let x = 0 ; x<arrayOfObjects.length ; x++)
-  grandTotal=grandTotal+arrayOfObjects[x].sumCookies;
-console.log(grandTotal);
-
-let tf=document.createElement('td');
-footerRow.appendChild(tf);
-tf.textContent = grandTotal;
-
-const form = document.getElementById('form');
-
-form.addEventListener('submit',handleSubmitting);
-
-function handleSubmitting(event){
-  event.preventDefault();
-  console.log(event);
-  let newName = event.target.nameField.value;
-  console.log(newName);
-  let min = event.target.minField.value;
-  min=parseInt(min);
-  console.log(min);
-  let max = event.target.maxField.value;
-  min=parseInt(max);
-  console.log(max);
-  let avg = event.target.avgField.value;
-  min=parseFloat(avg);
-  console.log(avg);
-  tableE1.deleteRow(tableE1.rows.length-1);
-  let newCity= new City(newName,min,max,avg);
-  newCity.cpHourSold();
-  newCity.render();
+function footer(){
   let footerRow=document.createElement('tr');
   tableE1.appendChild(footerRow);
   footerRow.textContent='Totals';
@@ -139,8 +105,34 @@ function handleSubmitting(event){
   footerRow.appendChild(tf);
   tf.textContent = grandTotal;
 }
-
-
+footer();
+const form = document.getElementById('form');
+form.addEventListener('submit',handleSubmitting);
+function handleSubmitting(event){
+  event.preventDefault();
+  console.log(event);
+  let newName = event.target.nameField.value;
+  let min = event.target.minField.value;
+  min=parseInt(min);
+  console.log(min);
+  let max = event.target.maxField.value;
+  min=parseInt(max);
+  console.log(max);
+  let avg = event.target.avgField.value;
+  min=parseFloat(avg);
+  console.log(avg);
+  if(newName.match(letters))
+  {
+    tableE1.deleteRow(tableE1.rows.length-1);
+    let newCity= new City(newName,min,max,avg);
+    newCity.cpHourSold();
+    newCity.render();
+    footer();
+  }
+  else{
+    alert( 'Please provide city name!' );
+  }
+}
 
 // const seattle = {
 //   minCust:23,
