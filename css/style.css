@@ -29,4 +29,5 @@ header nav ul{
 header nav ul li{
 font-size: 20px;
   display: inline-block;
+  margin-left: 200px;
 }
